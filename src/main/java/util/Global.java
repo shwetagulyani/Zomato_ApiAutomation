@@ -1,6 +1,7 @@
 package util;
 
 import common.Api_Base;
+import lombok.SneakyThrows;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -34,7 +35,13 @@ public class Global {
 		base.set_content_type(contentType);
 	}
 
-	public
+	public String init() throws Exception{
+		setBaseUrl();
+		setContentType();
+		setUserKey();
+		String user_key = getBase().get_userkey();
+		return user_key;
+	}
 
 
 }

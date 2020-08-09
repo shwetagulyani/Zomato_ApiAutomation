@@ -19,7 +19,7 @@ public class Helper {
         Object containerObject = null;
 
         try {
-            containerObject = Class.forName(String.valueOf(dtoClassName)).newInstance();
+            containerObject = Class.forName(String.valueOf(dtoClassName));
             ApiAsserts.assertNotNull(containerObject, "Failed to load the target class for Class Name: " + dtoClassName);
             containerObject = gson.fromJson((Reader) json, containerObject.getClass());
         } catch (Exception ex) {

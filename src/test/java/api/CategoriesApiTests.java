@@ -8,10 +8,7 @@ import dto.CategoriesResponseDTO;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import util.ApiMethodConstants;
-import util.Global;
-import util.Helper;
-import util.TestGroups;
+import util.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -41,6 +38,7 @@ public class CategoriesApiTests extends ZomatoApiActions{
     public void verifyUsersApiResponse() throws IOException, URISyntaxException
     {
 
+        categories_resource = global.getBase().get_categoriesResource();
         response = getCategoriesApiResponse(global,user_key,categories_resource,  ApiMethodConstants.GET);
 
         int status = response.getStatusCode();
@@ -55,21 +53,10 @@ public class CategoriesApiTests extends ZomatoApiActions{
         CategoriesDTO categoriesDTO = response.getBody().as(CategoriesDTO.class);
 
         CategoriesResponseDTO categoriesResponseDTO= (CategoriesResponseDTO) Helper.convertJsonToDTO(response.getBody(), CategoriesResponseDTO.class);
+        ApiAsserts.assertNotNull(categoriesResponseDTO.getCategories(),"Category is found to be null");
+        ApiAsserts.assertNotEmpty(categoriesResponseDTO.getCategories(), "Categories can not be null");
 
-//
-//        // simply query the JsonPath object to get a String value of the node
-//        // specified by JsonPath
-//        String first_name = jsonPathEvaluator.get("[0].first_name");
-//        String last_name = jsonPathEvaluator.get("[0].last_name");
-//        String career = jsonPathEvaluator.get("[0].career");
-//        String phone = jsonPathEvaluator.get("[0].phone");
-//
-//        // Validate the response
-//        ApiAsserts.assertNotEmpty(response.getBody().asString(),"Users api response is empty");
-//        ApiAsserts.assertNotEmpty(first_name, "first name  is empty in the Response");
-//        ApiAsserts.assertNotEmpty(last_name, "last name  is empty in the Response");
-//        ApiAsserts.assertNotEmpty(career, "career  is empty in the Response");
-//        ApiAsserts.assertNotEmpty(phone, "phone  is empty in the Response");
+
 
     }
 
