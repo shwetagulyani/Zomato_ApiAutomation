@@ -17,5 +17,4 @@ public class PropertyReader {
 			return output;
 		}
 
-
 	}
