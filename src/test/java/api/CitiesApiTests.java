@@ -2,7 +2,6 @@ package api;
 
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
-import dto.CategoriesObjectDTO;
 import dto.CitiesResponseDTO;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -15,9 +14,6 @@ import util.TestGroups;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 public class CitiesApiTests extends ZomatoApiActions {
 
@@ -26,8 +22,6 @@ public class CitiesApiTests extends ZomatoApiActions {
     Global global = new Global();
     String cities_resource;
     String user_key;
-
-
 
     @BeforeTest
     public void setup_urls() throws Exception {
@@ -42,118 +36,111 @@ public class CitiesApiTests extends ZomatoApiActions {
    Verify the Categories API with Valid user_key
    It should return List of categories objects
     */
-    @Test(testName = "Verify Cities api response", description = "verify Cities Api response with status code 200", groups = {TestGroups.API, TestGroups.Sanity}, priority = 1)
-    public void verifyCitiesApiResponse() throws IOException, URISyntaxException {
+    @Test(testName = "Verify Cities api response Without Params", description = "verify Cities Api response Without Params status code 200", groups = {TestGroups.API, TestGroups.Sanity}, priority = 1)
+    public void verifyCitiesApiResponseWithoutParams() throws IOException, URISyntaxException {
+        //getCitiesApiResponse will get the response by executing the api
         response = getCitiesApiResponse(global, user_key, cities_resource, ApiMethodConstants.GET);
 
-        int status = response.getStatusCode();
-        List<CategoriesObjectDTO> categoriesObjectDTOList = new LinkedList<>();
-        ApiAsserts.assertEquals(status, 200, "Status returned is incorrect");
+        CitiesResponseDTO citiesResponseDTO = response.getBody().as(CitiesResponseDTO.class);
+
+        //assertions
+        ApiAsserts.assertEquals(response.getStatusCode(), 200, "Status returned is incorrect");
+        ApiAsserts.assertEquals(response.getStatusLine(),"HTTP/1.1 200 OK","Cities Response status line does not match");
         ApiAsserts.assertEquals(response.getContentType(), global.getBase().get_content_type(), "Content type does not match");
-
-        System.out.println("Cities Api Response Body: " + response.getBody().asString());
-        CitiesResponseDTO citiesResponseDTO = (CitiesResponseDTO) Helper.convertJsonToDTO(response.getBody(),CitiesResponseDTO.class.getCanonicalName());
-
-        ApiAsserts.assertNotNull(citiesResponseDTO.getHas_more(),"Category is found to be null");
-//        ApiAsserts.assertNotEmpty(categoriesResponseDTO.getCategories(), "Categories can not be null");
-
-
-       // ArrayList<CategoriesDTO> categoriesDTOArrayList;
-//        CategoriesDTO categoriesDTO = response.getBody().as(CategoriesDTO.class);
-//
-//        CategoriesResponseDTO categoriesResponseDTO= (CategoriesResponseDTO) Helper.convertJsonToDTO(response.getBody(), CategoriesResponseDTO.class);
-//        ApiAsserts.assertNotNull(categoriesResponseDTO.getCategories(),"Category is found to be null");
-//        ApiAsserts.assertNotEmpty(categoriesResponseDTO.getCategories(), "Categories can not be null");
-
-
-
-        //get the JsonPath object instance from the Response interface
-        //JsonPath jsonPathEvaluator = response.jsonPath();
-//        ArrayList<CategoriesDTO> categoriesDTOArrayList;
-//        CategoriesDTO categoriesDTO = response.getBody().as(CategoriesDTO.class);
-
-//        String medicineJson = initArray("Medicines.json").toString();
-//        Gson gson = new Gson();
-//        Type medicineListType = new TypeToken<List<Medicine>>() {}.getType();
-//        List<Medicine> medicineArray = gson.fromJson(medicineJson, medicineListType);
-//        return medicineArray
-
-//        Type categoriesListType = new TypeToken<List<CategoriesObjectDTO>>(){}.getType();
-//
-//         categoriesObjectDTOList= (List<CategoriesObjectDTO>) (Helper.convertJsonToDTO(response.getBody().asString(), categoriesListType));
-//        ApiAsserts.assertTrue(categoriesObjectDTOList.size()>0,"Category is found to be null");
-        // ApiAsserts.assertNotEmpty(categoriesResponseDTO.getCategories(), "Categories can not be null");
+        ApiAsserts.assertEquals(citiesResponseDTO.getLocation_suggestions().size(),0,"Cities Location_suggestions size expected is 0");
+        ApiAsserts.assertNotEmpty(citiesResponseDTO.getStatus(), "Cities Status is Empty. Expected It should have some values");
+        ApiAsserts.assertNotNull(citiesResponseDTO.getHas_more(), "Cities api response has_more is null. Expected not null value");
+        ApiAsserts.assertEquals(citiesResponseDTO.getHas_more(),0, "Cities api response has_more is not same as Expected value");
+        ApiAsserts.assertEquals(citiesResponseDTO.getHas_total(), 0, "Cities api response has_total is not same as Expected value");
+        ApiAsserts.assertTrue(citiesResponseDTO.isUser_has_addresses(),"Cities User_has_addresses found false, expected true");
     }
 
-    @Test(testName = "Verify Cities api response", description = "verify Cities Api response with status code 200", groups = {TestGroups.API, TestGroups.Sanity}, priority = 1)
+    @Test(testName = "Verify Cities api response with Parameter q", description = "verify Cities Api response with Parameter q status code 200", groups = {TestGroups.API, TestGroups.Sanity}, priority = 2)
     public void verifyCitiesApiResponseWithParamCityName() throws Exception {
+        //To add params to the request
         HashMap<String,String> params = new HashMap<>();
         params.put("q","delhi");
+        //getCitiesApiResponse will get the response by executing the api
         response = getCitiesApiResponseWithParams(global, user_key, cities_resource, ApiMethodConstants.GET,params);
 
-        int status = response.getStatusCode();
-       // List<CategoriesObjectDTO> categoriesObjectDTOList = new LinkedList<>();
-        ApiAsserts.assertEquals(status, 200, "Status returned is incorrect");
-        ApiAsserts.assertEquals(response.getContentType(), global.getBase().get_content_type(), "Content type does not match");
+        CitiesResponseDTO citiesResponseDTO = response.getBody().as(CitiesResponseDTO.class);
 
-        System.out.println("Cities Api Response Body: " + response.getBody().asString());
-//        CitiesResponseDTO citiesResponseDTO = (CitiesResponseDTO) Helper.convertJsonToDTO(response.getBody(), CitiesResponseDTO.class.getCanonicalName());
-//
-//        ApiAsserts.assertNotNull(citiesResponseDTO.getHas_more(), "Category is found to be null");
+        //assertions
+        ApiAsserts.assertEquals(response.getStatusCode(), 200, "Status returned is incorrect");
+        ApiAsserts.assertEquals(response.getStatusLine(),"HTTP/1.1 200 OK","Cities Response status line does not match");
+        ApiAsserts.assertEquals(response.getContentType(), global.getBase().get_content_type(), "Content type does not match");
+        ApiAsserts.assertTrue(citiesResponseDTO.getLocation_suggestions().size()>0,"Cities Location_suggestions is not greater than 0. Expected It should have some values");
+        ApiAsserts.assertNotEmpty(citiesResponseDTO.getStatus(), "Cities Status is Empty. Expected It should have some values");
+        ApiAsserts.assertNotNull(citiesResponseDTO.getHas_more(), "Cities api response has_more is null. Expected not null value");
+        ApiAsserts.assertEquals(citiesResponseDTO.getHas_more(),0, "Cities api response has_more is not same as Expected value");
+        ApiAsserts.assertEquals(citiesResponseDTO.getHas_total(), 0, "Cities api response has_total is not same as Expected value");
+        ApiAsserts.assertTrue(citiesResponseDTO.isUser_has_addresses(),"Cities User_has_addresses found false, expected true");
     }
 
-    @Test(testName = "Verify Cities api response", description = "verify Cities Api response with status code 200", groups = {TestGroups.API, TestGroups.Sanity}, priority = 1)
+    @Test(testName = "Verify Cities api response with params Latitude And Longitude", description = "verify Cities Api response with params Latitude And Longitude status code 200", groups = {TestGroups.API, TestGroups.Sanity}, priority = 3)
     public void verifyCitiesApiResponseWithLatitudeAndLongitudeParam() throws Exception {
+        //To add params to the request
         HashMap<String,Object> params = new HashMap<>();
         params.put("lat",28.7014);
         params.put("lon","77.1025");
+        //getCitiesApiResponse will get the response by executing the api
         response = getCitiesApiResponseWithParams(global, user_key, cities_resource, ApiMethodConstants.GET,params);
 
-        int status = response.getStatusCode();
-        //List<CategoriesObjectDTO> categoriesObjectDTOList = new LinkedList<>();
-        ApiAsserts.assertEquals(status, 200, "Status returned is incorrect");
-        ApiAsserts.assertEquals(response.getContentType(), global.getBase().get_content_type(), "Content type does not match");
+        CitiesResponseDTO citiesResponseDTO = response.getBody().as(CitiesResponseDTO.class);
 
-        System.out.println("Cities Api Response Body: " + response.getBody().asString());
-//        CitiesResponseDTO citiesResponseDTO = (CitiesResponseDTO) Helper.convertJsonToDTO(response.getBody(), CitiesResponseDTO.class.getCanonicalName());
-//
-//        ApiAsserts.assertNotNull(citiesResponseDTO.getHas_more(), "Category is found to be null");
+        //assertions
+        ApiAsserts.assertEquals(response.getStatusCode(), 200, "Status returned is incorrect");
+        ApiAsserts.assertEquals(response.getStatusLine(),"HTTP/1.1 200 OK","Categories Response status line does not match");
+        ApiAsserts.assertEquals(response.getContentType(), global.getBase().get_content_type(), "Content type does not match");
+        ApiAsserts.assertTrue(citiesResponseDTO.getLocation_suggestions().size()>0,"Cities Location_suggestions is not greater than 0. Expected It should have some values");
+        ApiAsserts.assertNotEmpty(citiesResponseDTO.getStatus(), "Cities Status is Empty. Expected It should have some values");
+        ApiAsserts.assertNotNull(citiesResponseDTO.getHas_more(), "Cities api response has_more is null. Expected not null value");
+        ApiAsserts.assertEquals(citiesResponseDTO.getHas_more(),0, "Cities api response has_more is not same as Expected value");
+        ApiAsserts.assertEquals(citiesResponseDTO.getHas_total(), 0, "Cities api response has_total is not same as Expected value");
+        ApiAsserts.assertTrue(citiesResponseDTO.isUser_has_addresses(),"Cities User_has_addresses found false, expected true");
     }
 
-    @Test(testName = "Verify Cities api response", description = "verify Cities Api response with status code 200", groups = {TestGroups.API, TestGroups.Sanity}, priority = 1)
+    @Test(testName = "Verify Cities api response with Longitude Param", description = "verify Cities Api response with Longitude Param status code 200", groups = {TestGroups.API, TestGroups.Sanity}, priority = 4)
     public void verifyCitiesApiResponseWithLongitudeParam() throws Exception {
+        //To add params to the request
         HashMap<String,Object> params = new HashMap<>();
         params.put("lon",77.1025);
         response = getCitiesApiResponseWithParams(global, user_key, cities_resource, ApiMethodConstants.GET,params);
 
-        int status = response.getStatusCode();
-        //List<CategoriesObjectDTO> categoriesObjectDTOList = new LinkedList<>();
-        ApiAsserts.assertEquals(status, 200, "Status returned is incorrect");
-        ApiAsserts.assertEquals(response.getContentType(), global.getBase().get_content_type(), "Content type does not match");
+        CitiesResponseDTO citiesResponseDTO = response.getBody().as(CitiesResponseDTO.class);
 
-        System.out.println("Cities Api Response Body: " + response.getBody().asString());
-//        CitiesResponseDTO citiesResponseDTO = (CitiesResponseDTO) Helper.convertJsonToDTO(response.getBody(), CitiesResponseDTO.class.getCanonicalName());
-//
-//        ApiAsserts.assertNotNull(citiesResponseDTO.getHas_more(), "Category is found to be null");
+        //assertions
+        ApiAsserts.assertEquals(response.getStatusCode(), 200, "Status returned is incorrect");
+        ApiAsserts.assertEquals(response.getStatusLine(),"HTTP/1.1 200 OK","Cities Response status line does not match");
+        ApiAsserts.assertEquals(response.getContentType(), global.getBase().get_content_type(), "Content type does not match");
+        ApiAsserts.assertEquals(citiesResponseDTO.getLocation_suggestions().size(),0,"Cities Location_suggestions size expected is 0");
+        ApiAsserts.assertNotEmpty(citiesResponseDTO.getStatus(), "Cities Status is Empty. Expected It should have some values");
+        ApiAsserts.assertNotNull(citiesResponseDTO.getHas_more(), "Cities api response has_more is null. Expected not null value");
+        ApiAsserts.assertEquals(citiesResponseDTO.getHas_more(),0, "Cities api response has_more is not same as Expected value");
+        ApiAsserts.assertEquals(citiesResponseDTO.getHas_total(), 0, "Cities api response has_total is not same as Expected value");
+        ApiAsserts.assertTrue(citiesResponseDTO.isUser_has_addresses(),"Cities User_has_addresses found false, expected true");
     }
 
 
-    @Test(testName = "Verify Cities api response", description = "verify Cities Api response with status code 200", groups = {TestGroups.API, TestGroups.Sanity}, priority = 1)
+    @Test(testName = "Verify Cities api response With CityIds Param", description = "verify Cities Api response With CityIds Param status code 200", groups = {TestGroups.API, TestGroups.Sanity}, priority = 5)
     public void verifyCitiesApiResponseWithCityIdsParam() throws Exception {
         HashMap<String,Object> params = new HashMap<>();
         params.put("city_ids","1,2,3");
 
         response = getCitiesApiResponseWithParams(global, user_key, cities_resource, ApiMethodConstants.GET,params);
 
-        int status = response.getStatusCode();
-        //List<CategoriesObjectDTO> categoriesObjectDTOList = new LinkedList<>();
-        ApiAsserts.assertEquals(status, 200, "Status returned is incorrect");
-        ApiAsserts.assertEquals(response.getContentType(), global.getBase().get_content_type(), "Content type does not match");
-
+        CitiesResponseDTO citiesResponseDTO = response.getBody().as(CitiesResponseDTO.class);
         System.out.println("Cities Api Response Body: " + response.getBody().asString());
-//        CitiesResponseDTO citiesResponseDTO = (CitiesResponseDTO) Helper.convertJsonToDTO(response.getBody(), CitiesResponseDTO.class.getCanonicalName());
-//
-//        ApiAsserts.assertNotNull(citiesResponseDTO.getHas_more(), "Category is found to be null");
+        //assertions
+        ApiAsserts.assertEquals(response.getStatusCode(), 200, "Status returned is incorrect");
+        ApiAsserts.assertEquals(response.getStatusLine(),"HTTP/1.1 200 OK","Categories Response status line does not match");
+        ApiAsserts.assertEquals(response.getContentType(), global.getBase().get_content_type(), "Content type does not match");
+        ApiAsserts.assertEquals(citiesResponseDTO.getLocation_suggestions().size(),3,"Cities Location_suggestions is not greater than 0. Expected It should have some values");
+        ApiAsserts.assertNotEmpty(citiesResponseDTO.getStatus(), "Cities Status is Empty. Expected It should have some values");
+        ApiAsserts.assertNotNull(citiesResponseDTO.getHas_more(), "Cities api response has_more is null. Expected not null value");
+        ApiAsserts.assertEquals(citiesResponseDTO.getHas_more(),0, "Cities api response has_more is not same as Expected value");
+        ApiAsserts.assertEquals(citiesResponseDTO.getHas_total(), 0, "Cities api response has_total is not same as Expected value");
+        ApiAsserts.assertTrue(citiesResponseDTO.isUser_has_addresses(),"Cities User_has_addresses found false, expected true");
     }
 
     @Test(testName = "Verify Cities api response", description = "verify Cities Api response with status code 200", groups = {TestGroups.API, TestGroups.Sanity}, priority = 1)
@@ -164,15 +151,18 @@ public class CitiesApiTests extends ZomatoApiActions {
 
         response = getCitiesApiResponseWithParams(global, user_key, cities_resource, ApiMethodConstants.GET,params);
 
-        int status = response.getStatusCode();
-        //List<CategoriesObjectDTO> categoriesObjectDTOList = new LinkedList<>();
-        ApiAsserts.assertEquals(status, 200, "Status returned is incorrect");
-        ApiAsserts.assertEquals(response.getContentType(), global.getBase().get_content_type(), "Content type does not match");
-
+        CitiesResponseDTO citiesResponseDTO = response.getBody().as(CitiesResponseDTO.class);
         System.out.println("Cities Api Response Body: " + response.getBody().asString());
-//        CitiesResponseDTO citiesResponseDTO = (CitiesResponseDTO) Helper.convertJsonToDTO(response.getBody(), CitiesResponseDTO.class.getCanonicalName());
-//
-//        ApiAsserts.assertNotNull(citiesResponseDTO.getHas_more(), "Category is found to be null");
+        //assertions
+        ApiAsserts.assertEquals(response.getStatusCode(), 200, "Status returned is incorrect");
+        ApiAsserts.assertEquals(response.getStatusLine(),"HTTP/1.1 200 OK","Categories Response status line does not match");
+        ApiAsserts.assertEquals(response.getContentType(), global.getBase().get_content_type(), "Content type does not match");
+        ApiAsserts.assertEquals(citiesResponseDTO.getLocation_suggestions().size(),2,"Cities Location_suggestions is not greater than 0. Expected It should have some values");
+        ApiAsserts.assertNotEmpty(citiesResponseDTO.getStatus(), "Cities Status is Empty. Expected It should have some values");
+        ApiAsserts.assertNotNull(citiesResponseDTO.getHas_more(), "Cities api response has_more is null. Expected not null value");
+        ApiAsserts.assertEquals(citiesResponseDTO.getHas_more(),0, "Cities api response has_more is not same as Expected value");
+        ApiAsserts.assertEquals(citiesResponseDTO.getHas_total(), 0, "Cities api response has_total is not same as Expected value");
+        ApiAsserts.assertTrue(citiesResponseDTO.isUser_has_addresses(),"Cities User_has_addresses found false, expected true");
     }
 
     @Test(testName = "Verify Cities api response with invalid user key", description = "verify categories Api response with status code 403", groups = {TestGroups.API, TestGroups.Regression}, priority = 2)
@@ -203,17 +193,22 @@ public class CitiesApiTests extends ZomatoApiActions {
     Verify the Categories API with POST method
     It is returning the List of Categories Object
      */
-    @Test(testName = "Verify Cities api response with POST method", description = "verify Cities Api response with status code 403", groups = {TestGroups.API, TestGroups.Regression}, priority = 3)
+    @Test(testName = "Verify Cities api response with POST method", description = "verify Cities Api response with status code 403", groups = {TestGroups.API, TestGroups.Regression}, priority = 6)
     public void verifyCitiesApiResponseWithPOSTMethod() throws IOException, URISyntaxException {
         response = getCategoriesApiResponse(global, user_key, cities_resource, ApiMethodConstants.POST);
 
-        int statusCode = response.getStatusCode();
-        System.out.println("User Api Response Body: " + response.getBody().asString());
+        CitiesResponseDTO citiesResponseDTO = response.getBody().as(CitiesResponseDTO.class);
 
-
-        ApiAsserts.assertEquals(statusCode, 200, "Status returned is incorrect");
+        //assertions
+        ApiAsserts.assertEquals(response.getStatusCode(), 200, "Status returned is incorrect");
+        ApiAsserts.assertEquals(response.getStatusLine(),"HTTP/1.1 200 OK","Cities Response status line does not match");
         ApiAsserts.assertEquals(response.getContentType(), global.getBase().get_content_type(), "Content type does not match");
-        // Validate the response
+        ApiAsserts.assertEquals(citiesResponseDTO.getLocation_suggestions().size(),0,"Cities Location_suggestions size expected is 0");
+        ApiAsserts.assertNotEmpty(citiesResponseDTO.getStatus(), "Cities Status is Empty. Expected It should have some values");
+        ApiAsserts.assertNotNull(citiesResponseDTO.getHas_more(), "Cities api response has_more is null. Expected not null value");
+        ApiAsserts.assertEquals(citiesResponseDTO.getHas_more(),0, "Cities api response has_more is not same as Expected value");
+        ApiAsserts.assertEquals(citiesResponseDTO.getHas_total(), 0, "Cities api response has_total is not same as Expected value");
+        ApiAsserts.assertTrue(citiesResponseDTO.isUser_has_addresses(),"Cities User_has_addresses found false, expected true");
     }
 
       /*
@@ -221,15 +216,15 @@ public class CitiesApiTests extends ZomatoApiActions {
     It is returning HTML response with status code 200
      */
 
-    @Test(testName = "Verify Cities api response with Invalid resource", description = "verify Cities Api response with status code 403", groups = {TestGroups.API, TestGroups.Regression}, priority = 4)
+    @Test(testName = "Verify Cities api response with Invalid resource", description = "verify Cities Api response with status code 403", groups = {TestGroups.API, TestGroups.Regression}, priority = 7)
     public void verifyCitiesApiResponseWithInvalidResource() throws IOException, URISyntaxException {
+
         cities_resource = global.getBase().get_baseUrl() + "233444";
         response = getCategoriesApiResponse(global, user_key, cities_resource, ApiMethodConstants.GET);
 
-        int statusCode = response.getStatusCode();
-        System.out.println("User Api Response Body: " + response.getBody().asString());
-
-        ApiAsserts.assertEquals(statusCode, 200, "Status returned is incorrect");
-//        ApiAsserts.assertEquals(response.getContentType(),"", "Content type does not match");
+        //assertions
+        ApiAsserts.assertEquals(response.getStatusCode(), 200, "Status returned is incorrect");
+        ApiAsserts.assertEquals(response.getStatusLine(), "HTTP/1.1 200 OK", "Categories Response status line does not match");
+        ApiAsserts.assertEquals(response.getContentType(), "text/html; charset=UTF-8", "Content type does not match");
     }
 }

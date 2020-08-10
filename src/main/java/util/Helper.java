@@ -1,11 +1,9 @@
 package util;
 
-import java.io.Reader;
 import java.lang.reflect.Type;
 
 import com.google.gson.Gson;
-import com.jayway.restassured.response.ResponseBody;
-import dto.CategoriesResponseDTO;
+
 
 public class Helper {
     private static Gson gson = new Gson();
@@ -15,14 +13,14 @@ public class Helper {
      * containterClassName -  class name of the dto
      * Usage : listeningExternalDTO = (ListeningExternalDTO)Helper.convertJsonToDTO(json, ListeningExternalDTO.class.getCanonicalName());
      */
-    public static Object convertJsonToDTO(ResponseBody json, String dtoClassName) {
-
+    public static Object convertJsonToDTO(String json, String dtoClassName) {
+        //UiLogger.logInfo("Converting Json input to " + dtoClassName + " Object ");
         Object containerObject = null;
-
+        //UiLogger.logInfo("Json is - " + json);
         try {
-            containerObject = Class.forName(String.valueOf(dtoClassName));
+            containerObject = Class.forName(dtoClassName);
             ApiAsserts.assertNotNull(containerObject, "Failed to load the target class for Class Name: " + dtoClassName);
-            containerObject = gson.fromJson((Reader) json, containerObject.getClass());
+            containerObject = gson.fromJson(json, containerObject.getClass());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
