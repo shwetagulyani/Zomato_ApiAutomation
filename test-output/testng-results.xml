@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" ignored="0" total="1" passed="1">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="4311" started-at="2020-08-09T12:45:14Z" finished-at="2020-08-09T12:45:18Z">
+    <groups>
+      <group name="sanity">
+        <method signature="CategoriesApiTests.verifyUsersApiResponse()[pri:1, instance:api.CategoriesApiTests@d2e6b0b]" name="verifyUsersApiResponse" class="api.CategoriesApiTests"/>
+      </group> <!-- sanity -->
+      <group name="api">
+        <method signature="CategoriesApiTests.verifyUsersApiResponse()[pri:1, instance:api.CategoriesApiTests@d2e6b0b]" name="verifyUsersApiResponse" class="api.CategoriesApiTests"/>
+      </group> <!-- api -->
+    </groups>
+    <test name="Default test" duration-ms="4311" started-at="2020-08-09T12:45:14Z" finished-at="2020-08-09T12:45:18Z">
+      <class name="api.CategoriesApiTests">
+        <test-method status="PASS" signature="setup_urls()[pri:0, instance:api.CategoriesApiTests@d2e6b0b]" name="setup_urls" is-config="true" duration-ms="56" started-at="2020-08-09T12:45:14Z" finished-at="2020-08-09T12:45:14Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setup_urls -->
+        <test-method status="PASS" signature="verifyUsersApiResponse()[pri:1, instance:api.CategoriesApiTests@d2e6b0b]" name="verifyUsersApiResponse" duration-ms="4178" started-at="2020-08-09T12:45:14Z" description="verify users Api response with status code 200" finished-at="2020-08-09T12:45:18Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- verifyUsersApiResponse -->
+      </class> <!-- api.CategoriesApiTests -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

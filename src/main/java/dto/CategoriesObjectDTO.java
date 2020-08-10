@@ -10,5 +10,5 @@ import lombok.*;
 @Builder
 
 public class CategoriesObjectDTO {
-    CategoriesDTO CategoriesObject;
+    CategoriesDTO Categories;
 }

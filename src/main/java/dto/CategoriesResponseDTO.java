@@ -11,5 +11,5 @@ import java.util.ArrayList;
 @Builder
 
 public class CategoriesResponseDTO {
-    ArrayList < CategoriesObjectDTO > Categories = new ArrayList< CategoriesObjectDTO >();
-}
+    ArrayList<CategoriesObjectDTO> categories = new ArrayList<CategoriesObjectDTO>();
+} 

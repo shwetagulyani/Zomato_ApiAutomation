@@ -12,7 +12,7 @@ public enum RestUrlMapper {
         this.baseUrl = baseUrl;
     }
 
-    public String getUrlPath(String...args) {
+    public String getUrlPath(String... args) {
         String format = String.format(this.baseUrl, (Object[]) args);
         return format;
     }

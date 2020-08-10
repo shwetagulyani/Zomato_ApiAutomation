@@ -2,6 +2,7 @@ package util;
 
 import java.io.Reader;
 import java.lang.reflect.Type;
+
 import com.google.gson.Gson;
 import com.jayway.restassured.response.ResponseBody;
 import dto.CategoriesResponseDTO;
@@ -14,7 +15,7 @@ public class Helper {
      * containterClassName -  class name of the dto
      * Usage : listeningExternalDTO = (ListeningExternalDTO)Helper.convertJsonToDTO(json, ListeningExternalDTO.class.getCanonicalName());
      */
-    public static Object convertJsonToDTO(ResponseBody json, Class<CategoriesResponseDTO> dtoClassName) {
+    public static Object convertJsonToDTO(ResponseBody json, String dtoClassName) {
 
         Object containerObject = null;
 
