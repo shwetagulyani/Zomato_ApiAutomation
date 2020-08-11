@@ -8,7 +8,6 @@ import org.testng.annotations.Test;
 import util.ApiAsserts;
 import util.ApiMethodConstants;
 import common.Global;
-import util.Helper;
 import util.TestGroups;
 
 import java.io.IOException;
@@ -19,9 +18,10 @@ public class CitiesApiTests extends ZomatoApiActions {
 
     Response response;
 
-    Global global = new Global();
+   Global global = new Global();
     String cities_resource;
     String user_key;
+    ZomatoApiActions zomatoApiActions = new ZomatoApiActions();
 
     @BeforeTest
     public void setup_urls() throws Exception {
@@ -39,7 +39,7 @@ public class CitiesApiTests extends ZomatoApiActions {
     @Test(testName = "Verify Cities api response Without Params", description = "verify Cities Api response Without Params status code 200", groups = {TestGroups.API, TestGroups.Sanity}, priority = 1)
     public void verifyCitiesApiResponseWithoutParams() throws IOException, URISyntaxException {
         //getCitiesApiResponse will get the response by executing the api
-        response = getCitiesApiResponse(global, user_key, cities_resource, ApiMethodConstants.GET);
+        response = zomatoApiActions.getCitiesApiResponse(global, user_key, cities_resource, ApiMethodConstants.GET);
 
         CitiesResponseDTO citiesResponseDTO = response.getBody().as(CitiesResponseDTO.class);
 
@@ -61,7 +61,7 @@ public class CitiesApiTests extends ZomatoApiActions {
         HashMap<String,String> params = new HashMap<>();
         params.put("q","delhi");
         //getCitiesApiResponse will get the response by executing the api
-        response = getCitiesApiResponseWithParams(global, user_key, cities_resource, ApiMethodConstants.GET,params);
+        response = zomatoApiActions.getCitiesApiResponseWithParams(global, user_key, cities_resource, ApiMethodConstants.GET,params);
 
         CitiesResponseDTO citiesResponseDTO = response.getBody().as(CitiesResponseDTO.class);
 
@@ -84,7 +84,7 @@ public class CitiesApiTests extends ZomatoApiActions {
         params.put("lat",28.7014);
         params.put("lon","77.1025");
         //getCitiesApiResponse will get the response by executing the api
-        response = getCitiesApiResponseWithParams(global, user_key, cities_resource, ApiMethodConstants.GET,params);
+        response = zomatoApiActions.getCitiesApiResponseWithParams(global, user_key, cities_resource, ApiMethodConstants.GET,params);
 
         CitiesResponseDTO citiesResponseDTO = response.getBody().as(CitiesResponseDTO.class);
 
@@ -105,7 +105,7 @@ public class CitiesApiTests extends ZomatoApiActions {
         //To add params to the request
         HashMap<String,Object> params = new HashMap<>();
         params.put("lon",77.1025);
-        response = getCitiesApiResponseWithParams(global, user_key, cities_resource, ApiMethodConstants.GET,params);
+        response = zomatoApiActions.getCitiesApiResponseWithParams(global, user_key, cities_resource, ApiMethodConstants.GET,params);
 
         CitiesResponseDTO citiesResponseDTO = response.getBody().as(CitiesResponseDTO.class);
 
@@ -127,7 +127,7 @@ public class CitiesApiTests extends ZomatoApiActions {
         HashMap<String,Object> params = new HashMap<>();
         params.put("city_ids","1,2,3");
 
-        response = getCitiesApiResponseWithParams(global, user_key, cities_resource, ApiMethodConstants.GET,params);
+        response = zomatoApiActions.getCitiesApiResponseWithParams(global, user_key, cities_resource, ApiMethodConstants.GET,params);
 
         CitiesResponseDTO citiesResponseDTO = response.getBody().as(CitiesResponseDTO.class);
         System.out.println("Cities Api Response Body: " + response.getBody().asString());
@@ -149,7 +149,7 @@ public class CitiesApiTests extends ZomatoApiActions {
         params.put("q","delhi");
         params.put("count",2);
 
-        response = getCitiesApiResponseWithParams(global, user_key, cities_resource, ApiMethodConstants.GET,params);
+        response = zomatoApiActions.getCitiesApiResponseWithParams(global, user_key, cities_resource, ApiMethodConstants.GET,params);
 
         CitiesResponseDTO citiesResponseDTO = response.getBody().as(CitiesResponseDTO.class);
         System.out.println("Cities Api Response Body: " + response.getBody().asString());
@@ -168,11 +168,9 @@ public class CitiesApiTests extends ZomatoApiActions {
     @Test(testName = "Verify Cities api response with invalid user key", description = "verify categories Api response with status code 403", groups = {TestGroups.API, TestGroups.Regression}, priority = 2)
     public void verifyUsersApiResponseWithInvalidUserKey() throws IOException, URISyntaxException {
         String user_key = "12234";
-        response = getCategoriesApiResponse(global, user_key, cities_resource, ApiMethodConstants.GET);
+        response = zomatoApiActions.getCategoriesApiResponse(global, user_key, cities_resource, ApiMethodConstants.GET);
 
         int statusCode = response.getStatusCode();
-        System.out.println("User Api Response Body: " + response.getBody().asString());
-
 
         JsonPath jsonPathEvaluator = response.jsonPath();
         int code = jsonPathEvaluator.get("code");
@@ -195,7 +193,7 @@ public class CitiesApiTests extends ZomatoApiActions {
      */
     @Test(testName = "Verify Cities api response with POST method", description = "verify Cities Api response with status code 403", groups = {TestGroups.API, TestGroups.Regression}, priority = 6)
     public void verifyCitiesApiResponseWithPOSTMethod() throws IOException, URISyntaxException {
-        response = getCategoriesApiResponse(global, user_key, cities_resource, ApiMethodConstants.POST);
+        response = zomatoApiActions.getCategoriesApiResponse(global, user_key, cities_resource, ApiMethodConstants.POST);
 
         CitiesResponseDTO citiesResponseDTO = response.getBody().as(CitiesResponseDTO.class);
 
@@ -220,7 +218,7 @@ public class CitiesApiTests extends ZomatoApiActions {
     public void verifyCitiesApiResponseWithInvalidResource() throws IOException, URISyntaxException {
 
         cities_resource = global.getBase().get_baseUrl() + "233444";
-        response = getCategoriesApiResponse(global, user_key, cities_resource, ApiMethodConstants.GET);
+        response = zomatoApiActions.getCategoriesApiResponse(global, user_key, cities_resource, ApiMethodConstants.GET);
 
         //assertions
         ApiAsserts.assertEquals(response.getStatusCode(), 200, "Status returned is incorrect");

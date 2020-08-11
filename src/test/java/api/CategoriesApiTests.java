@@ -1,5 +1,8 @@
 package api;
 
+
+import org.testng.annotations.Listeners;
+import reporting.Reports;
 import common.Global;
 import dto.CategoriesResponseDTO;
 import org.testng.annotations.Test;
@@ -18,8 +21,10 @@ public class CategoriesApiTests extends ZomatoApiActions {
     Response response;
 
     Global global = new Global();
+    Reports report = new Reports();
     String categories_resource;
     String user_key;
+    ZomatoApiActions zomatoApiActions = new ZomatoApiActions();
 
     @BeforeTest
     public void setup_urls() throws Exception {
@@ -36,7 +41,7 @@ public class CategoriesApiTests extends ZomatoApiActions {
     public void verifyCategoriesApiResponse() throws IOException, URISyntaxException {
 
         //getCategoriesApiResponse will get the response by executing the api
-        response = getCategoriesApiResponse(global, user_key, categories_resource, ApiMethodConstants.GET);
+        response = zomatoApiActions.getCategoriesApiResponse( global, user_key, categories_resource, ApiMethodConstants.GET);
 
         CategoriesResponseDTO categoriesResponseDTO = response.getBody().as(CategoriesResponseDTO.class);
 
@@ -60,7 +65,7 @@ public class CategoriesApiTests extends ZomatoApiActions {
         String user_key = "12234"; //set invalid user_key
 
         //getCategoriesApiResponse will get the response by executing the api
-        response = getCategoriesApiResponse(global, user_key, categories_resource, ApiMethodConstants.GET);
+        response = zomatoApiActions.getCategoriesApiResponse(global, user_key, categories_resource, ApiMethodConstants.GET);
 
         JsonPath jsonPathEvaluator = response.jsonPath();
         int code = jsonPathEvaluator.get("code");
@@ -84,7 +89,7 @@ public class CategoriesApiTests extends ZomatoApiActions {
     @Test(testName = "Verify Categories api response with POST method", description = "verify categories Api response with status code 403", groups = {TestGroups.API, TestGroups.Regression}, priority = 3)
     public void verifyCategoriesApiResponseWithPOSTMethod() throws IOException, URISyntaxException {
         //getCategoriesApiResponse will get the response by executing the api
-        response = getCategoriesApiResponse(global, user_key, categories_resource, ApiMethodConstants.POST);
+        response = zomatoApiActions.getCategoriesApiResponse(global, user_key, categories_resource, ApiMethodConstants.POST);
 
         CategoriesResponseDTO categoriesResponseDTO = response.getBody().as(CategoriesResponseDTO.class);
 
@@ -107,7 +112,7 @@ public class CategoriesApiTests extends ZomatoApiActions {
     public void verifyCategoriesApiResponseWithInvalidResource() throws IOException, URISyntaxException {
         categories_resource = global.getBase().get_baseUrl() + "233444"; //invalid resource
         //getCategoriesApiResponse will get the response by executing the api
-        response = getCategoriesApiResponse(global, user_key, categories_resource, ApiMethodConstants.GET);
+        response = zomatoApiActions.getCategoriesApiResponse(global, user_key, categories_resource, ApiMethodConstants.GET);
 
         //assertions
         ApiAsserts.assertEquals(response.getStatusCode(), 200, "Status returned is incorrect");
