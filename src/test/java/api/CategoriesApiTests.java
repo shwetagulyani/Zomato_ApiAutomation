@@ -1,8 +1,5 @@
 package api;
 
-
-import org.testng.annotations.Listeners;
-import reporting.Reports;
 import common.Global;
 import dto.CategoriesResponseDTO;
 import org.testng.annotations.Test;
@@ -13,7 +10,6 @@ import util.ApiAsserts;
 import util.ApiMethodConstants;
 import util.TestGroups;
 
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 
@@ -21,7 +17,6 @@ public class CategoriesApiTests extends ZomatoApiActions {
     Response response;
 
     Global global = new Global();
-    Reports report = new Reports();
     String categories_resource;
     String user_key;
     ZomatoApiActions zomatoApiActions = new ZomatoApiActions();
