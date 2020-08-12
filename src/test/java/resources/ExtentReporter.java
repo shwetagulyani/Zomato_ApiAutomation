@@ -20,7 +20,7 @@ public class ExtentReporter implements IReporter {
     private ExtentReports extent;
 
     public void generateReport(List<XmlSuite> xmlSuites, List<ISuite> suites, String outputDirectory) {
-        extent = new ExtentReports(System.getProperty("user.dir") + "/Reports/ExtentReports" + ".html", true);
+        extent = new ExtentReports(System.getProperty("user.dir") + "/Reports/ExtentReports/Zomato_AutomationApiStatus" + ".html", true);
         for (ISuite suite : suites) {
 
             Map<String, ISuiteResult> result = suite.getResults();
